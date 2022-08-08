@@ -179,7 +179,7 @@ func CreateRouter(r []Route) Routes {
 			panic("Error Invalid path: " + route.Path)
 		}
 
-		if route.Path == "/" || (route.Children != nil && len(route.Children) > 0) { // if the route is a root route or has children
+		if route.Path != "/" || (route.Children != nil && len(route.Children) > 0) { // if the route is a root route or has children
 			for _, child := range route.Children {
 
 				if child.Path == "" || child.Path == "/" {
@@ -194,6 +194,7 @@ func CreateRouter(r []Route) Routes {
 					Error:      child.Error,
 				})
 			}
+
 		}
 
 		routes[route.Path] = createRoute(finalRoute{
@@ -240,7 +241,7 @@ func App(config AppConfig) error {
 
 			if string(route.Method) == method {
 
-				var next bool
+				var next bool = true
 
 				for _, middleware := range m {
 					next = middleware(ctx) // if middleware returns false, it will stop the execution of the route
@@ -249,12 +250,16 @@ func App(config AppConfig) error {
 					}
 				}
 
-				for _, middleware := range route.Middleware {
+				if route.Middleware != nil {
 
-					next = middleware(ctx) // if middleware returns false, it will stop the execution of the route
+					for _, middleware := range route.Middleware {
 
-					if !next {
-						break
+						next = middleware(ctx) // if middleware returns false, it will stop the execution of the route
+
+						if !next {
+							break
+						}
+
 					}
 
 				}
