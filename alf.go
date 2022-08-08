@@ -41,7 +41,6 @@ type AppConfig struct {
 	Middleware []Middleware
 	Headers    []Header
 	Port       string
-	IP         string
 	Favicon    string
 	NotFound   func(ctx *fasthttp.RequestCtx)
 }
@@ -210,7 +209,7 @@ func CreateRouter(r []Route) Routes {
 
 }
 
-func App(config AppConfig) {
+func App(config AppConfig) error {
 
 	var r = config.Routes
 	var h = config.Headers
@@ -225,15 +224,9 @@ func App(config AppConfig) {
 		port = config.Port
 	}
 
-	if config.IP == "" {
-		ip = "0.0.0.0"
-	} else {
-		ip = config.IP
-	}
-
 	println("Server running on " + ip + ":" + port)
 
-	fasthttp.ListenAndServe(ip+":"+port, func(ctx *fasthttp.RequestCtx) {
+	err := fasthttp.ListenAndServe(":"+port, func(ctx *fasthttp.RequestCtx) {
 
 		var method = string(ctx.Method())
 
@@ -284,5 +277,11 @@ func App(config AppConfig) {
 		}
 
 	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 
 }
