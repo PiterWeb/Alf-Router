@@ -1,4 +1,4 @@
-package main
+package alf
 
 import (
 	"github.com/pquerna/ffjson/ffjson"
