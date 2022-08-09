@@ -4,6 +4,8 @@
 
 👉 This is a framework / router built on ⬆ top of the fasthttp package. Alf relies on scalability and his structure wich is  similar to Flutter projects 📴
 
+✨ Inspired by Flutter & Fiber
+
 ## Purpouse 
 
 📖 Learn 
