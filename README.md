@@ -39,7 +39,7 @@ Import it into your code 🔠
 	    alf "github.com/PiterWeb/Alf-Router"
     )
 
-Set up this simple structure
+Write this simple structure
 
     err := alf.App(
 	    alf.AppConfig(
