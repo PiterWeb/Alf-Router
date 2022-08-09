@@ -5,31 +5,31 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type Ctx = fasthttp.RequestCtx
+type Ctx = fasthttp.RequestCtx // alias for fasthttp.RequestCtx
 
-type Method string
+type Method string // GET, POST, PUT, DELETE
 
-type Routes map[string]finalRoute // string is the path of the route
+type routes map[string]finalRoute // string is the path of the route
 
 type Header struct {
-	Name  string
-	Value string
+	Name  string // name of the header
+	Value string // value of the header
 }
 
-type Middleware func(ctx *Ctx) bool
+type Middleware func(ctx *Ctx) bool // func that returns true if passed and false if an error ocurred
 
 type Route struct {
-	Path       string
-	Method     Method
-	Handle     func(ctx *fasthttp.RequestCtx)
-	Children   []Route
-	Error      func(ctx *fasthttp.RequestCtx)
-	Middleware []Middleware
-	Headers    []Header
+	Path       string // path
+	Method     Method // method (only one)
+	Handle     func(ctx *fasthttp.RequestCtx) // func that handles the route
+	Children   []Route // children of the route (if the route isnt the root route) [all childrens inherit parents Middlewares and Headers ]
+	Error      func(ctx *fasthttp.RequestCtx) // func that handles errors of the route
+	Middleware []Middleware // middlewares of the route
+	Headers    []Header // headers
 }
 
 type finalRoute struct {
-	Method     Method
+	Method     Method 
 	Handle     func(ctx *fasthttp.RequestCtx)
 	Middleware []Middleware
 	Headers    []Header
@@ -37,15 +37,15 @@ type finalRoute struct {
 }
 
 type AppConfig struct {
-	Routes     Routes
-	Middleware []Middleware
-	Headers    []Header
-	Port       string
-	Favicon    string
-	NotFound   func(ctx *fasthttp.RequestCtx)
+	Routes     routes // routes of the app
+	Middleware []Middleware // global middlewares
+	Headers    []Header // global headers
+	Port       string // port of the app
+	Favicon    string // path to the favicon
+	NotFound   func(ctx *fasthttp.RequestCtx) // func that handles NotFound requests
 }
 
-func JSON(data interface{}) []byte {
+func JSON(data interface{}) []byte { // utility function to convert a struct or map to json([]byte)
 
 	json, err := ffjson.Marshal(data)
 
@@ -124,7 +124,6 @@ func JSON(data interface{}) []byte {
 // 			}),
 // 			Middleware: []Middleware{
 // 				func(ctx *Ctx) bool { // Middleware passing the request to the next middleware or route returns true if the request is valid and false if it is not valid
-// 					fmt.Println("Middleware")
 // 					return true
 // 				},
 // 			},
@@ -169,9 +168,9 @@ func createRoute(r finalRoute) finalRoute {
 
 }
 
-func CreateRouter(r []Route) Routes {
+func CreateRouter(r []Route) routes { // creates the routes of the app
 
-	routes := make(Routes)
+	routes := make(routes)
 
 	for _, route := range r {
 
@@ -210,7 +209,7 @@ func CreateRouter(r []Route) Routes {
 
 }
 
-func App(config AppConfig) error {
+func App(config AppConfig) error { // creates the app and starts it
 
 	var r = config.Routes
 	var h = config.Headers
@@ -218,6 +217,7 @@ func App(config AppConfig) error {
 
 	var port string
 	var ip string
+	var favicon string
 
 	if config.Port == "" {
 		port = "8080"
@@ -225,9 +225,24 @@ func App(config AppConfig) error {
 		port = config.Port
 	}
 
+	if config.Favicon == "" {
+		favicon = "/favicon.ico"
+	} else {
+		favicon = config.Favicon
+	}
+
+	faviconHandler := fasthttp.FSHandler(favicon, 1)
+
+	r["/favicon.ico"] = finalRoute{
+		Method: "GET",
+		Handle: faviconHandler,
+	}
+
 	println("Server running on " + ip + ":" + port)
 
 	err := fasthttp.ListenAndServe(":"+port, func(ctx *fasthttp.RequestCtx) {
+
+		
 
 		var method = string(ctx.Method())
 
