@@ -2,11 +2,13 @@
 
 ### Description 
 
-👉 This is a framework / router built on ⬆ top of the fasthttp package. Alf relies on scalability and his structure wich is  similar to Flutter projects 📴
+👉 This is a framework / router built on ⬆ top of the fasthttp package. Alf relies on scalability and his simple structure wich is  similar to Flutter projects 📴
 
-✨ Inspired by Flutter & Fiber
+✨ Inspired by Flutter & [Fiber](https://github.com/gofiber/fiber)
 
 ## Purpouse 
+
+👷‍♂️ Make my own router to start faster my backend projects
 
 📖 Learn 
 
@@ -62,6 +64,7 @@ Write this simple structure
 			},
 			Middleware: []alf.Middleware{},
 			Headers: []alf.Header{},
+            )
     )
     
     if err != nil {
