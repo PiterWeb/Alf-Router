@@ -1,6 +1,7 @@
-package alf
+package main
 
 import (
+	"bytes"
 	"github.com/pquerna/ffjson/ffjson"
 	"github.com/valyala/fasthttp"
 )
@@ -19,17 +20,17 @@ type Header struct {
 type Middleware func(ctx *Ctx) bool // func that returns true if passed and false if an error ocurred
 
 type Route struct {
-	Path       string // path
-	Method     Method // method (only one)
+	Path       string                         // path
+	Method     Method                         // method (only one)
 	Handle     func(ctx *fasthttp.RequestCtx) // func that handles the route
-	Children   []Route // children of the route (if the route isnt the root route) [all childrens inherit parents Middlewares and Headers ]
+	Children   []Route                        // children of the route (if the route isnt the root route) [all childrens inherit parents Middlewares and Headers ]
 	Error      func(ctx *fasthttp.RequestCtx) // func that handles errors of the route
-	Middleware []Middleware // middlewares of the route
-	Headers    []Header // headers
+	Middleware []Middleware                   // middlewares of the route
+	Headers    []Header                       // headers
 }
 
 type finalRoute struct {
-	Method     Method 
+	Method     Method
 	Handle     func(ctx *fasthttp.RequestCtx)
 	Middleware []Middleware
 	Headers    []Header
@@ -37,12 +38,13 @@ type finalRoute struct {
 }
 
 type AppConfig struct {
-	Routes     routes // routes of the app
-	Middleware []Middleware // global middlewares
-	Headers    []Header // global headers
-	Port       string // port of the app
-	Favicon    string // path to the favicon
-	NotFound   func(ctx *fasthttp.RequestCtx) // func that handles NotFound requests
+	Routes      routes                         // routes of the app
+	Middleware  []Middleware                   // global middlewares
+	Headers     []Header                       // global headers
+	Port        string                         // port of the app
+	Favicon     string                         // path to the favicon
+	NotFound    func(ctx *fasthttp.RequestCtx) // func that handles NotFound requests
+	ServeStatic bool                           // if true, the app will serve static files on "/static"
 }
 
 func JSON(data interface{}) []byte { // utility function to convert a struct or map to json([]byte)
@@ -57,90 +59,33 @@ func JSON(data interface{}) []byte { // utility function to convert a struct or 
 
 }
 
-// func main() {
+func main() {
 
-// 	App(
-// 		AppConfig{
-// 			Routes: CreateRouter([]Route{
-// 				{
-// 					Path:   "/",
-// 					Method: "GET",
-// 					Handle: func(ctx *Ctx) {
-// 						ctx.WriteString("Hello World")
-// 					},
-// 				},
-// 				{
-// 					Path:   "/test/map",
-// 					Method: "GET",
-// 					Handle: func(ctx *Ctx) {
-// 						ctx.Write(JSON(map[string]string{"test": "test"}))
-// 					},
-// 				},
-// 				{
-// 					Path:   "/static/user.json",
-// 					Method: "GET",
-// 					Handle: func(ctx *Ctx) {
+	App(
+		AppConfig{
+			Routes: CreateRouter([]Route{
+				{
+					Path:   "/",
+					Method: "GET",
+					Handle: func(ctx *Ctx) {
+						ctx.WriteString("Hello World")
+					},
+				},
+			}),
+			Headers: []Header{
+				{
+					Name:  "X-Powered-By",
+					Value: "Alf",
+				},
+			},
+			NotFound: func(ctx *Ctx) {
+				ctx.WriteString("Route not found")
+				ctx.SetStatusCode(fasthttp.StatusNotFound)
+			},
+		},
+	)
 
-// 						type user struct {
-// 							Name string
-// 							Age  int
-// 						}
-
-// 						ctx.Write(JSON(user{
-// 							Name: "Piter",
-// 							Age:  17,
-// 						}))
-
-// 					},
-// 				},
-// 				{
-// 					Path:   "/static",
-// 					Method: "GET",
-// 					Handle: func(ctx *Ctx) {
-// 						ctx.WriteString("Static Resources")
-// 					},
-// 					Middleware: []Middleware{
-// 						func(ctx *Ctx) bool {
-// 							ctx.Response.Header.Set("Content-Type", "text/html")
-// 							return true
-// 						},
-// 					},
-// 					Children: []Route{
-// 						{
-// 							Path:   "/index.html",
-// 							Method: "GET",
-// 							Handle: func(ctx *Ctx) {
-// 								ctx.SendFile("index.html")
-// 							},
-// 							Middleware: []Middleware{
-// 								func(ctx *Ctx) bool {
-// 									ctx.Response.Header.Set("Static", "true")
-// 									return true
-// 								},
-// 							},
-// 						},
-// 					},
-// 				},
-// 			}),
-// 			Middleware: []Middleware{
-// 				func(ctx *Ctx) bool { // Middleware passing the request to the next middleware or route returns true if the request is valid and false if it is not valid
-// 					return true
-// 				},
-// 			},
-// 			Headers: []Header{
-// 				{
-// 					Name:  "X-Powered-By",
-// 					Value: "Alf",
-// 				},
-// 			},
-// 			NotFound: func(ctx *Ctx) {
-// 				ctx.WriteString("Route not found")
-// 				ctx.SetStatusCode(fasthttp.StatusNotFound)
-// 			},
-// 		},
-// 	)
-
-// }
+}
 
 func (m Method) valid() bool {
 
@@ -231,6 +176,9 @@ func App(config AppConfig) error { // creates the app and starts it
 		favicon = config.Favicon
 	}
 
+	staticPrefix := []byte("/static/")
+	staticHandler := fasthttp.FSHandler("/static", 1)
+
 	faviconHandler := fasthttp.FSHandler(favicon, 1)
 
 	r["/favicon.ico"] = finalRoute{
@@ -241,8 +189,6 @@ func App(config AppConfig) error { // creates the app and starts it
 	println("Server running on " + ip + ":" + port)
 
 	err := fasthttp.ListenAndServe(":"+port, func(ctx *fasthttp.RequestCtx) {
-
-		
 
 		var method = string(ctx.Method())
 
@@ -287,12 +233,31 @@ func App(config AppConfig) error { // creates the app and starts it
 
 				ctx.WriteString("Method not allowed " + method)
 
-				route.Error(ctx)
+				if route.Error != nil {
+					route.Error(ctx)
+				}
+
 			}
 
 		} else {
 
-			config.NotFound(ctx)
+			if config.ServeStatic {
+
+				if bytes.HasPrefix(ctx.Path(), staticPrefix) {
+					staticHandler(ctx)
+				} else if config.NotFound != nil {
+					config.NotFound(ctx)
+				} else {
+					ctx.WriteString("Route not found: ERROR 404")
+				}
+
+			}
+
+			if config.NotFound != nil {
+				config.NotFound(ctx)
+			} else {
+				ctx.WriteString("Route not found: ERROR 404")
+			}
 
 		}
 
