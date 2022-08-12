@@ -1,4 +1,4 @@
-package main
+package alf
 
 import (
 	"bytes"
@@ -59,33 +59,33 @@ func JSON(data interface{}) []byte { // utility function to convert a struct or 
 
 }
 
-func main() {
+// func main() {
 
-	App(
-		AppConfig{
-			Routes: CreateRouter([]Route{
-				{
-					Path:   "/",
-					Method: "GET",
-					Handle: func(ctx *Ctx) {
-						ctx.WriteString("Hello World")
-					},
-				},
-			}),
-			Headers: []Header{
-				{
-					Name:  "X-Powered-By",
-					Value: "Alf",
-				},
-			},
-			NotFound: func(ctx *Ctx) {
-				ctx.WriteString("Route not found")
-				ctx.SetStatusCode(fasthttp.StatusNotFound)
-			},
-		},
-	)
+// 	App(
+// 		AppConfig{
+// 			Routes: CreateRouter([]Route{
+// 				{
+// 					Path:   "/",
+// 					Method: "GET",
+// 					Handle: func(ctx *Ctx) {
+// 						ctx.WriteString("Hello World")
+// 					},
+// 				},
+// 			}),
+// 			Headers: []Header{
+// 				{
+// 					Name:  "X-Powered-By",
+// 					Value: "Alf",
+// 				},
+// 			},
+// 			NotFound: func(ctx *Ctx) {
+// 				ctx.WriteString("Route not found")
+// 				ctx.SetStatusCode(fasthttp.StatusNotFound)
+// 			},
+// 		},
+// 	)
 
-}
+// }
 
 func (m Method) valid() bool {
 
