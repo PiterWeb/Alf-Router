@@ -24,6 +24,7 @@
 
  1. [fasthttp](github.com/valyala/fasthttp) (http ☁)
  2. [ffjson](github.com/pquerna/ffjson/ffjson) (parse interfaces to json fast)
+ 3. [pterm](github.com/pterm/pterm) (show info, errors & warnings)
 
 ## Docs
 
@@ -47,24 +48,23 @@ Write this simple structure
 
     err := alf.App(
 	    alf.AppConfig(
-		    Port: "8080",
 		    Routes: alf.CreateRouter([]alf.Route{
 			    {
 				    Path: "/",
 				    Method: "GET",
 				    Handle: func(ctx *alf.Ctx) {
 					    ctx.WriteString("Hello World!")
-					},
-				},
-			NotFound: func(ctx *alf.Ctx) {
-				ctx.SetContentType("application/json")
-				ctx.Write(alf.JSON(map[string]string{
-					"error":"not found"
-				}))
-			},
-			Middleware: []alf.Middleware{},
-			Headers: []alf.Header{},
-            )
+			    },
+		   },
+		   NotFound: func(ctx *alf.Ctx) {
+			    ctx.SetContentType("application/json")
+			    ctx.Write(alf.JSON(map[string]string{
+				   "error":"not found"
+			    }))
+		   },
+		   Middleware: []alf.Middleware{},
+		   Headers: []alf.Header{},
+        )
     )
     
     if err != nil {
