@@ -7,7 +7,19 @@ require github.com/valyala/fasthttp v1.38.0 // direct
 require github.com/pquerna/ffjson v0.0.0-20190930134022-aa0246cd15f7
 
 require (
+	atomicgo.dev/cursor v0.1.1 // indirect
+	atomicgo.dev/keyboard v0.2.8 // indirect
 	github.com/andybalholm/brotli v1.0.4 // indirect
+	github.com/containerd/console v1.0.3 // indirect
+	github.com/gookit/color v1.5.2 // indirect
 	github.com/klauspost/compress v1.15.8 // indirect
+	github.com/lithammer/fuzzysearch v1.1.5 // indirect
+	github.com/mattn/go-runewidth v0.0.13 // indirect
+	github.com/pterm/pterm v0.12.49 // indirect
+	github.com/rivo/uniseg v0.2.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
+	github.com/xo/terminfo v0.0.0-20210125001918-ca9a967f8778 // indirect
+	golang.org/x/sys v0.0.0-20220704084225-05e143d24a9e // indirect
+	golang.org/x/term v0.0.0-20210927222741-03fcf44c2211 // indirect
+	golang.org/x/text v0.3.7 // indirect
 )
