@@ -70,7 +70,7 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 					ctx.Response.Reset()
 					route.Error(ctx, errRoute)
 
-					showError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
+					go showError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
 
 				}
 			}
@@ -86,14 +86,14 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 			} else {
 
 				config.NotFound(ctx)
-				showWarning("Route not Found: " + string(ctx.Path()))
+				go showWarning("Route not Found: " + string(ctx.Path()))
 
 			}
 
 		} else {
 
 			config.NotFound(ctx)
-			showWarning("Route not Found: " + string(ctx.Path()))
+			go showWarning("Route not Found: " + string(ctx.Path()))
 
 		}
 

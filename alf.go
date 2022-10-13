@@ -1,7 +1,7 @@
 package alf
 
 // Tareas:
-// Intentar crear las rutas con concurrency para mejorar rendimiento
+// Intentar crear las rutas con concurrency para mejorar rendimiento inicial
 // ORM =>
 
 import (
@@ -40,7 +40,6 @@ import (
 
 // }
 
-
 func createRoute(r finalRoute) finalRoute { // create the route with the given parameters
 
 	r.Error = func(ctx *fasthttp.RequestCtx, err error) {
@@ -70,7 +69,7 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 		}
 
 		if route.Path == "" {
-			showInternalError("Invalid path set on route: ( " + route.Path + " )")
+			showInternalError("Invalid path set on route: (" + route.Path + " )")
 		}
 
 		if route.Path != "/" && (route.Children != nil && len(route.Children) > 0) { // if the route is not the root route and has children
