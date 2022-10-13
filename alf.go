@@ -1,7 +1,10 @@
 package alf
 
+// Tareas:
+// Intentar crear las rutas con concurrency para mejorar rendimiento
+// ORM =>
+
 import (
-	"strings"
 	"github.com/pterm/pterm"
 	"github.com/pterm/pterm/putils"
 	"github.com/valyala/fasthttp"
@@ -37,46 +40,34 @@ import (
 
 // }
 
-func (m Method) valid() bool { // return if the method is valid
-
-	switch m.string() {
-	case "GET", "POST", "PUT", "DELETE":
-		return true
-	default:
-		return false
-	}
-
-}
-
-func (m Method) string() string {
-
-	return strings.ToUpper(string(m))
-
-}
 
 func createRoute(r finalRoute) finalRoute { // create the route with the given parameters
 
-	if !r.Method.valid() {
-		showWarning("Invalid method ( " + string(r.Method) + " ) on route")
-	}
-
-	r.Error = func(ctx *fasthttp.RequestCtx) {
-		ctx.WriteString("Route Error")
+	r.Error = func(ctx *fasthttp.RequestCtx, err error) {
+		ctx.WriteString("Route Error: " + err.Error())
 		ctx.SetStatusCode(fasthttp.StatusInternalServerError)
-		showError("Route Error caused on route: " + string(ctx.Path()))
 	}
 
 	return r
 
 }
 
-func CreateRouter(r []Route) routes { // creates the routes of the app
+func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 	pterm.DefaultBigText.WithLetters(putils.LettersFromStringWithStyle("ALF", pterm.NewStyle(pterm.FgBlue))).Render()
 
-	routes := make(routes)
+	routes := map[string]map[string]finalRoute{
+		"GET":    {},
+		"POST":   {},
+		"DELETE": {},
+		"PUT":    {},
+	}
 
 	for _, route := range r {
+
+		if !route.Method.valid() {
+			showError("Invalid method ( " + route.Method.string() + " ) on route")
+		}
 
 		if route.Path == "" {
 			showInternalError("Invalid path set on route: ( " + route.Path + " )")
@@ -86,10 +77,10 @@ func CreateRouter(r []Route) routes { // creates the routes of the app
 			for _, child := range route.Children {
 
 				if child.Path == "" || child.Path == "/" {
-					panic("Error Invalid path: " + route.Path + child.Path)
+					showInternalError("Invalid path set on route: ( " + route.Path + child.Path + " )")
 				}
 
-				routes[route.Path+child.Path] = createRoute(finalRoute{ // generate new subroute
+				routes[route.Method.string()][route.Path+child.Path] = createRoute(finalRoute{ // generate new subroute
 					Method:     child.Method,
 					Handle:     child.Handle,
 					Middleware: append(route.Middleware, child.Middleware...), // apply middlewares of the parent route
@@ -100,7 +91,7 @@ func CreateRouter(r []Route) routes { // creates the routes of the app
 
 		}
 
-		routes[route.Path] = createRoute(finalRoute{
+		routes[route.Method.string()][route.Path] = createRoute(finalRoute{
 			Method:     route.Method,
 			Handle:     route.Handle,
 			Middleware: route.Middleware,
