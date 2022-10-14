@@ -1,10 +1,43 @@
 package alf
 
+// Tareas:
+// ORM =>
+
 import (
 	"bytes"
 	"github.com/pterm/pterm"
 	"github.com/valyala/fasthttp"
 )
+
+// Example APP:
+
+// func main() {
+
+// 	alf.App(
+// 		alf.AppConfig{
+// 			Routes: CreateRouter([]alf.Route{
+// 				{
+// 					Path:   "/",
+// 					Method: "GET",
+// 					Handle: func(ctx *Ctx) {
+// 						ctx.WriteString("Hello World")
+// 					},
+// 				},
+// 			}),
+// 			Headers: []alf.Header{
+// 				{
+// 					Name:  "X-Powered-By",
+// 					Value: "Alf",
+// 				},
+// 			},
+// 			NotFound: func(ctx *Ctx) {
+// 				ctx.WriteString("Route not found")
+// 				ctx.SetStatusCode(fasthttp.StatusNotFound)
+// 			},
+// 		},
+// 	)
+
+// }
 
 func App(config AppConfig) error { // creates the app and starts it
 
@@ -47,7 +80,15 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 
 	if methodFound {
 
-		route, pathFound := routes[string(ctx.Path())] // Intentar evitar la conversión de tipo del ctx.Path()
+		var path string = string(ctx.Path())
+
+		if len(path) > 1 && path[len(path)-1] == '/' { // make /api equal to /api/
+
+			path = path[:len(path)-1]
+
+		}
+
+		route, pathFound := routes[path] // Intentar evitar la conversión de tipo del ctx.Path()
 
 		if pathFound {
 
