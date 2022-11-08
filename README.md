@@ -2,7 +2,7 @@
 
 ### Description 
 
-👉 This is a framework / router built on ⬆ top of the fasthttp package. Alf relies on scalability and his simple structure wich is  similar to Flutter projects 📴
+👉 This is a micro-framework / router built on ⬆ top of the fasthttp package. Alf relies on scalability and his simple structure wich is  similar to Flutter projects 📴
 
 ✨ Inspired by Flutter & [Fiber](https://github.com/gofiber/fiber)
 
@@ -41,34 +41,35 @@ Download the package ⬇
 Import it into your code 🔠
 
     import (
-	    alf "github.com/PiterWeb/Alf-Router"
+	    "github.com/PiterWeb/Alf-Router"
     )
 
 Write this simple structure
 
     err := alf.App(
-	    alf.AppConfig(
-		    Routes: alf.CreateRouter([]alf.Route{
+	    alf.AppConfig{
+		   Routes: alf.CreateRouter([]alf.Route{
 			    {
 				    Path: "/",
 				    Method: "GET",
-				    Handle: func(ctx *alf.Ctx) {
+				    Handle: func(ctx *alf.Ctx) error {
 					    ctx.WriteString("Hello World!")
-			    },
-		   },
+					    return nil
+			    	    },
+		            },
+	           }),
 		   NotFound: func(ctx *alf.Ctx) {
 			    ctx.SetContentType("application/json")
 			    ctx.Write(alf.JSON(map[string]string{
-				   "error":"not found"
+				   "error":"not found",
 			    }))
 		   },
 		   Middleware: []alf.Middleware{},
 		   Headers: []alf.Header{},
-        )
-    )
+    })
     
     if err != nil {
 	    panic(err)
 	} 
 	
-Now you have setup 🔨 an index path  and the 404 route 📁 
+Now you have setup 🔨 an index path and the 404 route 📁 
