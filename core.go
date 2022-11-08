@@ -15,7 +15,7 @@ import (
 
 // 	alf.App(
 // 		alf.AppConfig{
-// 			Routes: CreateRouter([]alf.Route{
+// 			Routes: alf.CreateRouter([]alf.Route{
 // 				{
 // 					Path:   "/",
 // 					Method: "GET",
@@ -78,70 +78,66 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 
 	routes, methodFound := config.Routes[string(ctx.Method())]
 
-	if methodFound {
-
-		var path string = string(ctx.Path())
-
-		if len(path) > 1 && path[len(path)-1] == '/' { // make /api equal to /api/
-
-			path = path[:len(path)-1]
-
-		}
-
-		route, pathFound := routes[path] // Intentar evitar la conversión de tipo del ctx.Path()
-
-		if pathFound {
-
-			handleHeaders(ctx, config.Headers)
-
-			var next bool = true
-
-			handleMiddleware(ctx, config.Middleware, &next) // handle global middleware
-
-			if route.Middleware != nil && next {
-
-				handleMiddleware(ctx, route.Middleware, &next) // handle specific middleware
-
-			}
-
-			if next {
-				errRoute := route.Handle(ctx)
-
-				if errRoute != nil {
-					ctx.Response.Reset()
-					route.Error(ctx, errRoute)
-
-					go showError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
-
-				}
-			}
-
-		} else if config.ServeStatic && (string(ctx.Method()) == "GET") {
-
-			staticPrefix := []byte("/static/")
-			staticHandler := fasthttp.FSHandler("/static", 1)
-
-			if bytes.HasPrefix(ctx.Path(), staticPrefix) {
-
-				staticHandler(ctx)
-			} else {
-
-				config.NotFound(ctx)
-				go showWarning("Route not Found: " + string(ctx.Path()))
-
-			}
-
-		} else {
-
-			config.NotFound(ctx)
-			go showWarning("Route not Found: " + string(ctx.Path()))
-
-		}
-
-	} else {
+	if !methodFound {
 
 		config.NotAllowed(ctx)
+		return
 
+	}
+
+	var path string = string(ctx.Path())
+
+	if len(path) > 1 && path[len(path)-1] == '/' { // make /api equal to /api/
+
+		path = path[:len(path)-1]
+
+	}
+
+	route, pathFound := routes[path] // Intentar evitar la conversión de tipo del ctx.Path()
+
+	if !pathFound {
+
+		config.NotFound(ctx)
+		go showWarning("Route not Found: " + string(ctx.Path()))
+		return
+
+	}
+
+	if config.ServeStatic && (string(ctx.Method()) == "GET") {
+
+		staticPrefix := []byte("/static/")
+		staticHandler := fasthttp.FSHandler("/static", 1)
+
+		if bytes.HasPrefix(ctx.Path(), staticPrefix) {
+			staticHandler(ctx)
+			return
+		}
+
+	}
+
+	handleHeaders(ctx, config.Headers)
+
+	var next bool = true
+
+	handleMiddleware(ctx, config.Middleware, &next) // handle global middleware
+
+	if route.Middleware != nil && next {
+
+		handleMiddleware(ctx, route.Middleware, &next) // handle specific middleware
+
+	}
+
+	var errRoute error
+
+	if next {
+		errRoute = route.Handle(ctx)
+	}
+
+	if errRoute != nil {
+		ctx.Response.Reset()
+		route.Error(ctx, errRoute)
+		go showError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
+		return
 	}
 
 }

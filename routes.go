@@ -38,10 +38,12 @@ func createChildrenRoutes(routes methodRoutes, r Route, initialPath string) {
 
 			if !child.Method.valid() {
 				showError("Invalid method ( " + child.Method.string() + " ) on route " + initialPath + child.Path)
+				continue
 			}
 
 			if child.Path == "" || child.Path == "/" {
 				showInternalError("Invalid path set on route: ( " + initialPath + child.Path + " )")
+				continue
 			}
 
 			wg.Add(1)
@@ -87,10 +89,12 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 		if !route.Method.valid() {
 			showError("Invalid method ( " + route.Method.string() + " ) on route " + route.Path)
+			continue
 		}
 
 		if route.Path == "" {
 			showInternalError("Invalid path set on route: (" + route.Path + " )")
+			continue
 		}
 
 		createChildrenRoutes(routes, route, "")
