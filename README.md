@@ -8,7 +8,7 @@
 
 ## Purpouse 
 
-👷‍♂️ Make my own router to start faster my backend projects
+👷‍♂️ Make a router to start faster and simpler my backend projects
 
 📖 Learn 
 
