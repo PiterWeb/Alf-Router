@@ -1,10 +1,9 @@
 package alf
 
-// Tareas:
-// ORM =>
-
 import (
 	"bytes"
+
+	misc "github.com/PiterWeb/Alf-Router/errors"
 	"github.com/pterm/pterm"
 	"github.com/valyala/fasthttp"
 )
@@ -39,28 +38,21 @@ import (
 
 // }
 
-func App(config AppConfig) error { // creates the app and starts it
+func App(config *AppConfig) error { // creates the app and starts it
 
 	if config.Port == "" {
 		config.Port = "8080"
 	}
 
 	if config.NotFound == nil {
-		config.NotFound = func(ctx *fasthttp.RequestCtx) {
+		config.NotFound = func(ctx *Ctx) {
 			ctx.WriteString("Path not found: ERROR 404")
-		}
-	}
-
-	if config.NotAllowed == nil {
-		config.NotAllowed = func(ctx *fasthttp.RequestCtx) {
-			var method = string(ctx.Method())
-			ctx.WriteString("Method (" + method + ") not allowed")
 		}
 	}
 
 	pterm.Info.Println("Server running on  port :" + config.Port)
 
-	err := fasthttp.ListenAndServe(":"+config.Port, func(ctx *fasthttp.RequestCtx) {
+	err := fasthttp.ListenAndServe(":"+config.Port, func(ctx *Ctx) {
 
 		handleRoute(ctx, config)
 
@@ -74,15 +66,12 @@ func App(config AppConfig) error { // creates the app and starts it
 
 }
 
-func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
+func handleRoute(ctx *Ctx, config *AppConfig) {
 
 	routes, methodFound := config.Routes[string(ctx.Method())]
 
 	if !methodFound {
-
-		config.NotAllowed(ctx)
 		return
-
 	}
 
 	var path string = string(ctx.Path())
@@ -98,7 +87,7 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 	if !pathFound {
 
 		config.NotFound(ctx)
-		go showWarning("Route not Found: " + string(ctx.Path()))
+		go misc.ShowWarning("Route not Found: " + string(ctx.Path()))
 		return
 
 	}
@@ -115,15 +104,15 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 
 	}
 
-	handleHeaders(ctx, config.Headers)
+	handleHeaders(ctx, &config.Headers)
 
-	var next bool = true
+	next := true
 
-	handleMiddleware(ctx, config.Middleware, &next) // handle global middleware
+	handleMiddleware(ctx, &config.Middleware, &next) // handle global middleware
 
 	if route.Middleware != nil && next {
 
-		handleMiddleware(ctx, route.Middleware, &next) // handle specific middleware
+		handleMiddleware(ctx, &route.Middleware, &next) // handle specific middleware
 
 	}
 
@@ -136,7 +125,7 @@ func handleRoute(ctx *fasthttp.RequestCtx, config AppConfig) {
 	if errRoute != nil {
 		ctx.Response.Reset()
 		route.Error(ctx, errRoute)
-		go showError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
+		go misc.ShowError("Route Error (" + errRoute.Error() + ") caused on route: " + string(ctx.Path()))
 		return
 	}
 
