@@ -8,36 +8,6 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-// Example APP:
-
-// func main() {
-
-// 	alf.App(
-// 		alf.AppConfig{
-// 			Routes: alf.CreateRouter([]alf.Route{
-// 				{
-// 					Path:   "/",
-// 					Method: "GET",
-// 					Handle: func(ctx *Ctx) {
-// 						ctx.WriteString("Hello World")
-// 					},
-// 				},
-// 			}),
-// 			Headers: []alf.Header{
-// 				{
-// 					Name:  "X-Powered-By",
-// 					Value: "Alf",
-// 				},
-// 			},
-// 			NotFound: func(ctx *Ctx) {
-// 				ctx.WriteString("Route not found")
-// 				ctx.SetStatusCode(fasthttp.StatusNotFound)
-// 			},
-// 		},
-// 	)
-
-// }
-
 func App(config *AppConfig) error { // creates the app and starts it
 
 	if config.Port == "" {
