@@ -1,6 +1,7 @@
 package alf
 
 import (
+	"strings"
 	"sync"
 
 	misc "github.com/PiterWeb/Alf-Router/errors"
@@ -10,8 +11,6 @@ import (
 )
 
 var wg sync.WaitGroup
-
-const initialPath string = ""
 
 func (r *routes) addRoute(method string, path string, route *finalRoute) {
 
@@ -54,17 +53,23 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 		return
 	}
 
-	initialPath = initialPath + r.Path
+	newPath := initialPath + r.Path
 
 	for _, child := range r.Children {
 
+		child.Path = strings.Trim(child.Path, " ")
+
+		newChildPath := newPath + child.Path
+		// println("Full path: " + newChildPath)
+
+
 		if !child.Method.valid() {
-			misc.ShowError("Invalid method ( " + child.Method.string() + " ) on route " + initialPath + child.Path)
+			misc.ShowError("Invalid method ( " + child.Method.string() + " ) on route " + newChildPath)
 			continue
 		}
 
 		if child.Path == "" || child.Path == "/" {
-			misc.ShowInternalError("Invalid path set on route: ( " + initialPath + child.Path + " )")
+			misc.ShowInternalError("Invalid path set on route: ( " + newChildPath + " )")
 			continue
 		}
 
@@ -72,7 +77,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 
 		go func() {
 
-			routes.addRoute(r.Method.string(), initialPath+child.Path, &finalRoute{ // generate new subroute
+			routes.addRoute(child.Method.string(), newChildPath, &finalRoute{ // generate new subroute
 				Method:     child.Method,
 				Handle:     child.Handle,
 				Middleware: append(r.Middleware, child.Middleware...), // apply middlewares of the parent route
@@ -85,7 +90,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 		}()
 
 		if child.Children != nil && len(child.Children) > 0 {
-			createChildrenRoutes(routes, child, initialPath)
+			createChildrenRoutes(routes, child, newPath)
 		}
 
 	}
@@ -93,6 +98,8 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 }
 
 func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
+
+	const initialPath string = ""
 
 	pterm.DefaultBigText.WithLetters(putils.LettersFromStringWithStyle("ALF", pterm.NewStyle(pterm.FgBlue))).Render()
 
@@ -116,6 +123,8 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 			misc.ShowInternalError("Invalid path set on route: (" + route.Path + " )")
 			continue
 		}
+
+		route.Path = strings.Trim(route.Path, " ")
 
 		createChildrenRoutes(&routes, route, initialPath)
 
