@@ -5,6 +5,7 @@ import (
 
 	misc "github.com/PiterWeb/Alf-Router/errors"
 	"github.com/pterm/pterm"
+	"github.com/pterm/pterm/putils"
 	"github.com/valyala/fasthttp"
 )
 
@@ -22,6 +23,8 @@ func App(config *AppConfig) error { // creates the app and starts it
 	}
 
 	config.BeforeInit(config)
+
+	pterm.DefaultBigText.WithLetters(putils.LettersFromStringWithStyle("ALF", pterm.NewStyle(pterm.FgBlue))).Render()
 
 	pterm.Info.Println("Server running on  port :" + config.Port)
 

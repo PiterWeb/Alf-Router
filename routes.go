@@ -5,8 +5,7 @@ import (
 	"sync"
 
 	misc "github.com/PiterWeb/Alf-Router/errors"
-	"github.com/pterm/pterm"
-	"github.com/pterm/pterm/putils"
+
 	"github.com/valyala/fasthttp"
 )
 
@@ -61,7 +60,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 
 		newChildPath := newPath + child.Path
 		// println("Full path: " + newChildPath)
-		
+
 
 		if !child.Method.valid() {
 			misc.ShowError("Invalid method ( " + child.Method.string() + " ) on route " + newChildPath)
@@ -100,8 +99,6 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 	const initialPath string = ""
-
-	pterm.DefaultBigText.WithLetters(putils.LettersFromStringWithStyle("ALF", pterm.NewStyle(pterm.FgBlue))).Render()
 
 	routes := routes{
 		methodRoutes: methodRoutes{
