@@ -42,6 +42,7 @@ type AppConfig struct {
 	Port        string         // port of the app | default value '8080'
 	NotFound    func(ctx *Ctx) // func that handles NotFound requests
 	ServeStatic bool           // if true, the app will serve static files on "/static"
+	BeforeInit  func()
 }
 
 type routes struct {

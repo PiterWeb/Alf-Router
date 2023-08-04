@@ -10,6 +10,8 @@ import (
 
 func App(config *AppConfig) error { // creates the app and starts it
 
+	config.BeforeInit()
+
 	if config.Port == "" {
 		config.Port = "8080"
 	}
@@ -57,7 +59,7 @@ func handleRoute(ctx *Ctx, config *AppConfig) {
 	if !pathFound {
 
 		config.NotFound(ctx)
-		go misc.ShowWarning("Route not Found: " + string(ctx.Path())  + " [" + string(ctx.Method()) + "]")
+		go misc.ShowWarning("Route not Found: " + string(ctx.Path()) + " [" + string(ctx.Method()) + "]")
 		return
 
 	}
