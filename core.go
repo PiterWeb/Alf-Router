@@ -10,8 +10,6 @@ import (
 
 func App(config *AppConfig) error { // creates the app and starts it
 
-	config.BeforeInit()
-
 	if config.Port == "" {
 		config.Port = "8080"
 	}
@@ -21,6 +19,8 @@ func App(config *AppConfig) error { // creates the app and starts it
 			ctx.WriteString("Path not found: ERROR 404")
 		}
 	}
+
+	config.BeforeInit(config)
 
 	pterm.Info.Println("Server running on  port :" + config.Port)
 
