@@ -16,6 +16,7 @@ func App(config *AppConfig) error { // creates the app and starts it
 
 	if config.NotFound == nil {
 		config.NotFound = func(ctx *Ctx) {
+			ctx.Response.SetStatusCode(404)
 			ctx.WriteString("Path not found: ERROR 404")
 		}
 	}
