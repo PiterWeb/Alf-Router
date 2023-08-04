@@ -61,7 +61,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 
 		newChildPath := newPath + child.Path
 		// println("Full path: " + newChildPath)
-
+		
 
 		if !child.Method.valid() {
 			misc.ShowError("Invalid method ( " + child.Method.string() + " ) on route " + newChildPath)
@@ -105,10 +105,13 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 	routes := routes{
 		methodRoutes: methodRoutes{
-			"GET":    make(map[string]finalRoute),
-			"POST":   make(map[string]finalRoute),
-			"DELETE": make(map[string]finalRoute),
-			"PUT":    make(map[string]finalRoute),
+			"GET":     make(map[string]finalRoute),
+			"POST":    make(map[string]finalRoute),
+			"DELETE":  make(map[string]finalRoute),
+			"PUT":     make(map[string]finalRoute),
+			"PATCH":   make(map[string]finalRoute),
+			"HEAD":    make(map[string]finalRoute),
+			"OPTIONS": make(map[string]finalRoute),
 		},
 	}
 
