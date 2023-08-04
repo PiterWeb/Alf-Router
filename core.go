@@ -57,7 +57,7 @@ func handleRoute(ctx *Ctx, config *AppConfig) {
 	if !pathFound {
 
 		config.NotFound(ctx)
-		go misc.ShowWarning("Route not Found: " + string(ctx.Path()))
+		go misc.ShowWarning("Route not Found: " + string(ctx.Path())  + " [" + string(ctx.Method()) + "]")
 		return
 
 	}
