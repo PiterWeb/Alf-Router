@@ -28,7 +28,7 @@
 
 ## Features :
 
-- [x] Router 💨
+- [x] Fast Router 💨
 - [x] Concurrent Route Setup ⌚
 - [x] Send JSON Responses [(docs)](/utils/json/README.md)
 - [x] HTML/Go Templates Out of the BOX ✨ [(docs)](/utils/templates/README.md)
