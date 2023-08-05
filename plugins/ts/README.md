@@ -8,15 +8,15 @@
 
 Import it to your code 🔠
 
-    ```go
+```go
     import (
         tspl "github.com/PiterWeb/Alf-Router/plugins/ts"
     )
-    ```
+```
 
 Use it on your start point and change Packages with the names of the modules where are the types you want. For default all public types on the default module will be already included
 
-    ```go
+```go
     err := alf.App(&alf.AppConfig{
     	Port: "3000",
     	Routes: alf.CreateRouter([]alf.Route{
@@ -33,4 +33,4 @@ Use it on your start point and change Packages with the names of the modules whe
     		})
     	},
     })
-    ```
+```
