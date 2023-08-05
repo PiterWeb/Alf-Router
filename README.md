@@ -44,8 +44,9 @@
 ### Set up your first project 💻
 
 Download the package ⬇
-
-    go get github.com/PiterWeb/Alf-Router
+```shell
+go get github.com/PiterWeb/Alf-Router
+```
 
 Import it into your code 🔠
 
