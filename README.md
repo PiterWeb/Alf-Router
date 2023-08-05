@@ -33,8 +33,7 @@
 - [x] Send JSON Responses [(docs)](https://github.com/PiterWeb/Alf-Router/edit/master/README.md)
 - [x] Plugins 🧩 : 
 	- [x] Generate Types for TS (tygo pkg) [(docs)](https://github.com/PiterWeb/Alf-Router/edit/master/README.md)
-- [ ] 
-
+- [ ] Zero config HTML/Go Templates
 
 ## Docs
 
@@ -56,30 +55,23 @@ Import it into your code 🔠
 
 Write this simple structure
 
-    err := alf.App(
-	    alf.AppConfig{
-		   Routes: alf.CreateRouter([]alf.Route{
-			    {
-				    Path: "/",
-				    Method: "GET",
-				    Handle: func(ctx *alf.Ctx) error {
-					    ctx.WriteString("Hello World!")
-					    return nil
-			    	    },
-		            },
-	           }),
-		   NotFound: func(ctx *alf.Ctx) {
-			    ctx.SetContentType("application/json")
-			    ctx.Write(alf.JSON(map[string]string{
-				   "error":"not found",
-			    }))
-		   },
-		   Middleware: []alf.Middleware{},
-		   Headers: []alf.Header{},
-    })
-    
-    if err != nil {
-	    panic(err)
-	} 
+    err := alf.App(&alf.AppConfig{
+		Port: "3000",
+		Routes: alf.CreateRouter([]alf.Route{
+			{
+				Path: "/",
+				Handle: func(ctx *alf.Ctx) error {
+					_, err := ctx.WriteString("Hello World")
+					return err
+				},
+				Method: "get",
+			},
+		}),
+	})
+
+	if err != nil {
+		panic(err)
+	}
+
 	
-Now you have setup 🔨 an index path and the 404 route 📁 
+Now you have setup 🔨 an index route
