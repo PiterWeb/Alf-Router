@@ -30,9 +30,9 @@
 
 - [x] Router 💨
 - [x] Concurrent Route Setup ⌚
-- [x] Send JSON Responses [(docs)](https://github.com/PiterWeb/Alf-Router/master/utils/JSON.md)
+- [x] Send JSON Responses [(docs)](https://github.com/PiterWeb/Alf-Router/blob/master/utils/JSON.md)
 - [x] Plugins 🧩 : 
-	- [x] Generate Types for TS (tygo pkg) [(docs)](https://github.com/PiterWeb/Alf-Router/master/plugins/ts/README.md)
+	- [x] Generate Types for TS (tygo pkg) [(docs)](https://github.com/PiterWeb/Alf-Router/blob/master/plugins/ts/README.md)
 - [ ] Zero config HTML/Go Templates
 
 ## Docs
