@@ -36,13 +36,13 @@ type finalRoute struct {
 }
 
 type AppConfig struct {
-	Routes      methodRoutes   // routes of the app
-	Middleware  []Middleware   // global middlewares
-	Headers     []Header       // global headers
-	Port        string         // port of the app | default value '8080'
-	NotFound    func(ctx *Ctx) // func that handles NotFound requests
-	ServeStatic bool           // if true, the app will serve static files on "/static"
-	BeforeInit  func(*AppConfig)
+	Routes      methodRoutes     // routes of the app
+	Middleware  []Middleware     // global middlewares
+	Headers     []Header         // global headers
+	Port        string           // port of the app | default value '8080'
+	NotFound    func(ctx *Ctx)   // func that handles NotFound requests
+	ServeStatic bool             // if true, the app will serve static files on "/static"
+	BeforeInit  func(*AppConfig) // func that is been executed before serving routes
 }
 
 type routes struct {
