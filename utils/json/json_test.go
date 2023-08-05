@@ -1,4 +1,4 @@
-package utils
+package json
 
 import (
 	"testing"
@@ -12,9 +12,9 @@ func TestJSON(t *testing.T) {
 		"test": "success",
 	}
 
-	_ , err := JSON(&alf.Ctx{}, value)
+	_, err := JSON(&alf.Ctx{}, value)
 
-	if (err != nil) {
+	if err != nil {
 		t.Error("JSON Test Failed with err: " + err.Error())
 	}
 
