@@ -1,4 +1,4 @@
-# 🦌 ALF Router (API Like Flutter)
+# 🦌 ALF (API Like Flutter) Router  [Still Experimental]
 
 ### Description 
 
@@ -20,11 +20,21 @@
 
  - Go (Golang)
 
-#### External Packages  📦:
+#### Core External Packages  📦:
 
  1. [fasthttp](github.com/valyala/fasthttp) (http ☁)
  2. [ffjson](github.com/pquerna/ffjson/ffjson) (parse interfaces to json fast)
  3. [pterm](github.com/pterm/pterm) (show info, errors & warnings)
+
+## Features :
+
+- [x] Router 💨
+- [x] Concurrent Route Setup ⌚
+- [x] Send JSON Responses [(docs)](https://github.com/PiterWeb/Alf-Router/edit/master/README.md)
+- [x] Plugins 🧩 : 
+	- [x] Generate Types for TS (tygo pkg) [(docs)](https://github.com/PiterWeb/Alf-Router/edit/master/README.md)
+- [ ] 
+
 
 ## Docs
 
