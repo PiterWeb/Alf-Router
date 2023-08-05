@@ -49,12 +49,15 @@ Download the package ⬇
 
 Import it into your code 🔠
 
+```go
     import (
 	    alf "github.com/PiterWeb/Alf-Router"
     )
+```
 
 Write this simple structure
 
+```go
     err := alf.App(&alf.AppConfig{
 		Port: "3000",
 		Routes: alf.CreateRouter([]alf.Route{
@@ -72,6 +75,6 @@ Write this simple structure
 	if err != nil {
 		panic(err)
 	}
-
+```
 	
 Now you have setup 🔨 an index route
