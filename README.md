@@ -50,7 +50,7 @@ Download the package ⬇
 Import it into your code 🔠
 
     import (
-	    "github.com/PiterWeb/Alf-Router"
+	    alf "github.com/PiterWeb/Alf-Router"
     )
 
 Write this simple structure
