@@ -2,6 +2,7 @@ package alf
 
 import (
 	"bytes"
+	"fmt"
 
 	misc "github.com/PiterWeb/Alf-Router/errors"
 	"github.com/pterm/pterm"
@@ -9,7 +10,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func App(config *AppConfig) error { // creates the app and starts it
+func App(config *AppConfig) { // creates the app and starts it
 
 	if config.Port == "" {
 		config.Port = "8080"
@@ -36,17 +37,23 @@ func App(config *AppConfig) error { // creates the app and starts it
 
 	pterm.Info.Println("Server running on  port :" + config.Port)
 
-	err := fasthttp.ListenAndServe(":"+config.Port, func(ctx *Ctx) {
+	go fasthttp.ListenAndServe(":"+config.Port, func(ctx *Ctx) {
 
 		handleRoute(ctx, config)
 
 	})
 
-	if err != nil {
-		return err
-	}
+	exit := make(chan int8)
 
-	return nil
+	go func() {
+		pterm.Info.Println("Press enter to stop the server: ")
+
+		fmt.Scanf("\n%c")
+
+		exit <- 0
+	}()
+
+	<-exit
 
 }
 
