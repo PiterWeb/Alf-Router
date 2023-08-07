@@ -17,7 +17,7 @@ Import it to your code 🔠
 Use it on your start point and change Packages with the names of the modules where are the types you want. For default all public types on the default module will be already included
 
 ```go
-    alf.App(&alf.AppConfig{
+    err := alf.App(&alf.AppConfig{
     	Port: "3000",
     	Routes: alf.CreateRouter([]alf.Route{
     		{
@@ -33,4 +33,8 @@ Use it on your start point and change Packages with the names of the modules whe
 			},
 		},
     })
+
+	if err != nil {
+		panic(err)
+	}
 ```

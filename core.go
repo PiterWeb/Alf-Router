@@ -10,7 +10,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func App(config *AppConfig) { // creates the app and starts it
+func App(config *AppConfig) error { // creates the app and starts it
 
 	if config.Port == "" {
 		config.Port = "8080"
@@ -37,23 +37,25 @@ func App(config *AppConfig) { // creates the app and starts it
 
 	pterm.Info.Println("Server running on  port :" + config.Port)
 
-	go fasthttp.ListenAndServe(":"+config.Port, func(ctx *Ctx) {
+	errChan := make(chan error)
 
-		handleRoute(ctx, config)
+	go func() {
+		errChan <- fasthttp.ListenAndServe(":"+config.Port, func(ctx *Ctx) {
 
-	})
+			handleRoute(ctx, config)
 
-	exit := make(chan int8)
+		})
+	}()
 
 	go func() {
 		pterm.Info.Println("Press enter to stop the server: ")
 
 		fmt.Scanf("\n%c")
 
-		exit <- 0
+		errChan <- nil
 	}()
 
-	<-exit
+	return <-errChan
 
 }
 

@@ -19,7 +19,7 @@ Use it on your custom Routes
 
     useTemplate := alfTemplates.Templates("./templatesFolder", ".go.html")
 
-    alf.App(&alf.AppConfig{
+    err := alf.App(&alf.AppConfig{
     	Port: "3000",
     	Routes: alf.CreateRouter([]alf.Route{
     		{
@@ -31,6 +31,10 @@ Use it on your custom Routes
 			},
     	}),
     })
+
+    if err != nil {
+		panic(err)
+	}
 ```
 
 ```html

@@ -59,7 +59,7 @@ Import it into your code 🔠
 Write this simple structure
 
 ```go
-    alf.App(&alf.AppConfig{
+    err := alf.App(&alf.AppConfig{
 		Port: "3000",
 		Routes: alf.CreateRouter([]alf.Route{
 			{
@@ -72,6 +72,10 @@ Write this simple structure
 			},
 		}),
 	})
+
+	if err != nil {
+		panic(err)
+	}
 ```
 	
 Now you have setup 🔨 an index route
