@@ -25,7 +25,7 @@ Use it on your custom Routes
     		{
 				Path: "/",
 				Handle: func(ctx *alf.Ctx) error {
-					return useTemplate(ctx, "index.go.html", "I am a Text")
+					return useTemplate(ctx, "index", "I am a Text")
 				},
 				Method: "get",
 			},
