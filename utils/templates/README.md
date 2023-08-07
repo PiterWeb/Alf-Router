@@ -17,7 +17,7 @@ Use it on your custom Routes
 ```go
 // main.go
 
-    useTemplate := alfTemplates.Templates("./templatesFolder")
+    useTemplate := alfTemplates.Templates("./templatesFolder", ".go.html")
 
     err := alf.App(&alf.AppConfig{
     	Port: "3000",
