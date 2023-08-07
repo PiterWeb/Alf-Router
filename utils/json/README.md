@@ -20,7 +20,7 @@ Create your custom Struct or a Map
 
 Start sending JSON across your API Endpoints
 ```go
-    err := alf.App(&alf.AppConfig{
+    alf.App(&alf.AppConfig{
     	Port: "3000",
     	Routes: alf.CreateRouter([]alf.Route{
     		{
