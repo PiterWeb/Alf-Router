@@ -43,6 +43,11 @@ type AppConfig struct {
 	NotFound    func(ctx *Ctx)   // func that handles NotFound requests
 	ServeStatic bool             // if true, the app will serve static files on "/static"
 	BeforeInit  func(*AppConfig) // func that is been executed before serving routes
+	Plugins     []Plugin
+}
+
+type Plugin interface {
+	Init_plugin() error
 }
 
 type routes struct {

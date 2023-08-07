@@ -24,13 +24,13 @@ Use it on your start point and change Packages with the names of the modules whe
     			...
     		},
     	}),
-    	BeforeInit: func(ac *alf.AppConfig) {
-            tspl.Init_ts(tspl.TS_config{
-    			Packages: []string{
-                    "github.com/exampleUser/myProject/submodule"
-                },
-    			OutputFolder: "./ts-types",
-    		})
-    	},
+		Plugins: []alf.Plugin{
+			tspl.TS_plugin{
+				Packages: []string{
+					"github.com/exampleUser/myProject/submodule",
+				},
+				OutputFolder: "./ts-types",
+			},
+		},
     })
 ```

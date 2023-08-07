@@ -8,12 +8,12 @@ import (
 	"golang.org/x/mod/modfile"
 )
 
-type TS_config struct {
+type TS_plugin struct {
 	Packages     []string
 	OutputFolder string
 }
 
-func Init_ts(ts_config TS_config) error {
+func (plugin TS_plugin) Init_plugin() error {
 
 	cwd, err := os.Getwd()
 
@@ -31,24 +31,24 @@ func Init_ts(ts_config TS_config) error {
 
 	config := &tygo.Config{
 		Packages: []*tygo.PackageConfig{
-			{Path: mainPkg, OutputPath: ts_config.OutputFolder + "/main.ts"},
+			{Path: mainPkg, OutputPath: plugin.OutputFolder + "/main.ts"},
 		},
 	}
 
-	for _, pkg := range ts_config.Packages {
+	for _, pkg := range plugin.Packages {
 
 		if strings.Contains(pkg, mainPkg) {
 
 			config.Packages = append(config.Packages, &tygo.PackageConfig{
 				Path:       pkg,
-				OutputPath: ts_config.OutputFolder + "/" + strings.Split(pkg, mainPkg)[1] + ".ts",
+				OutputPath: plugin.OutputFolder + "/" + strings.Split(pkg, mainPkg)[1] + ".ts",
 			})
 
 		} else {
 
 			config.Packages = append(config.Packages, &tygo.PackageConfig{
 				Path:       pkg,
-				OutputPath: ts_config.OutputFolder + "/" + pkg + ".ts",
+				OutputPath: plugin.OutputFolder + "/" + pkg + ".ts",
 			})
 		}
 
