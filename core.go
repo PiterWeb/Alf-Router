@@ -22,7 +22,15 @@ func App(config *AppConfig) error { // creates the app and starts it
 		}
 	}
 
-	config.BeforeInit(config)
+	for _, pl := range config.Plugins {
+
+		err := pl.Init_plugin()
+
+		if err != nil {
+			misc.ShowError(err.Error())
+		}
+
+	}
 
 	pterm.DefaultBigText.WithLetters(putils.LettersFromStringWithStyle("ALF", pterm.NewStyle(pterm.FgBlue))).Render()
 
