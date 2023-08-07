@@ -9,7 +9,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-var wg sync.WaitGroup
+var routesWg sync.WaitGroup
 
 func (r *routes) addRoute(method string, path string, route *finalRoute) {
 
@@ -61,7 +61,6 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 		newChildPath := newPath + child.Path
 		// println("Full path: " + newChildPath)
 
-
 		if !child.Method.valid() {
 			misc.ShowError("Invalid method ( " + child.Method.string() + " ) on route " + newChildPath)
 			continue
@@ -72,7 +71,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 			continue
 		}
 
-		wg.Add(1)
+		routesWg.Add(1)
 
 		go func() {
 
@@ -84,7 +83,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 				Error:      child.Error,
 			})
 
-			wg.Done()
+			routesWg.Done()
 
 		}()
 
@@ -128,7 +127,7 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 		createChildrenRoutes(&routes, route, initialPath)
 
-		wg.Add(1)
+		routesWg.Add(1)
 
 		go func(route Route) {
 
@@ -140,11 +139,11 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 				Error:      route.Error,
 			})
 
-			wg.Done()
+			routesWg.Done()
 
 		}(route)
 
-		wg.Wait()
+		routesWg.Wait()
 	}
 
 	return routes.methodRoutes
