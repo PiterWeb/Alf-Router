@@ -2,6 +2,7 @@ package ts
 
 import (
 	"os"
+	"strings"
 
 	"github.com/gzuidhof/tygo/tygo"
 	"golang.org/x/mod/modfile"
@@ -35,10 +36,21 @@ func Init_ts(ts_config TS_config) error {
 	}
 
 	for _, pkg := range ts_config.Packages {
-		config.Packages = append(config.Packages, &tygo.PackageConfig{
-			Path:       pkg,
-			OutputPath: ts_config.OutputFolder + "/" + pkg + ".ts",
-		})
+
+		if strings.Contains(pkg, mainPkg) {
+
+			config.Packages = append(config.Packages, &tygo.PackageConfig{
+				Path:       pkg,
+				OutputPath: ts_config.OutputFolder + "/" + strings.Split(pkg, mainPkg)[1] + ".ts",
+			})
+
+		} else {
+
+			config.Packages = append(config.Packages, &tygo.PackageConfig{
+				Path:       pkg,
+				OutputPath: ts_config.OutputFolder + "/" + pkg + ".ts",
+			})
+		}
 
 	}
 
