@@ -8,6 +8,24 @@ func TestCreateRouter(t *testing.T) {
 
 	routes := []Route{
 		{
+			Path:   "/",
+			Method: "get",
+			Handle: func(ctx *Ctx) error {
+				ctx.WriteString("I am an index route")
+				return nil
+			},
+			Children: []Route{ //This will give a warning
+				{
+					Path:   "/raw",
+					Method: "get",
+					Handle: func(ctx *Ctx) error {
+						ctx.WriteString(BodyResponse)
+						return nil
+					},
+				},
+			},
+		},
+		{
 			Path: "/index",
 			Handle: func(ctx *Ctx) error {
 				return nil
