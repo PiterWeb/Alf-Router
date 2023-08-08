@@ -41,12 +41,24 @@ func createRoute(r *finalRoute) finalRoute { // create the route with the given 
 
 }
 
-func routeIsNotRootAndHaveChildren(r Route) bool {
+func routeHaveChildren(r Route) bool {
+	return r.Children != nil && len(r.Children) > 0
+}
 
-	return r.Path != "/" && (r.Children != nil && len(r.Children) > 0)
+func routeIsRoot(r Route) bool {
+	return r.Path == "/"
+}
+
+func routeIsNotRootAndHaveChildren(r Route) bool {
+	return !routeIsRoot(r) && routeHaveChildren(r)
 }
 
 func createChildrenRoutes(routes *routes, r Route, initialPath string) {
+
+	if routeIsRoot(r) && routeHaveChildren(r) {
+		misc.ShowWarning("'/' Route cannot have children")
+		return
+	}
 
 	if !routeIsNotRootAndHaveChildren(r) {
 		return
