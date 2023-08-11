@@ -8,7 +8,7 @@ import (
 	"github.com/pquerna/ffjson/ffjson"
 )
 
-func JSON(ctx *alf.Ctx, data interface{}) (int, error) { // utility function to convert a struct or map to json([]byte)
+func Marshall(ctx *alf.Ctx, data interface{}) (int, error) { // utility function to convert a struct or map to json([]byte)
 
 	json, err := ffjson.Marshal(data)
 
@@ -18,4 +18,8 @@ func JSON(ctx *alf.Ctx, data interface{}) (int, error) { // utility function to 
 
 	return ctx.Write(json)
 
+}
+
+func Unmarshall(data []byte, v interface{}) error {
+	return ffjson.Unmarshal(data, v)
 }
