@@ -8,7 +8,7 @@ func TestValid(t *testing.T) {
 
 	value := "hello world"
 
-	valid := Method(value).valid()
+	valid := method(value).valid()
 
 	if valid {
 		t.Errorf("%s cannot be a Method", value)
@@ -19,7 +19,7 @@ func TestValid(t *testing.T) {
 
 	value = "get"
 
-	valid = Method(value).valid()
+	valid = method(value).valid()
 
 	if !valid {
 		t.Errorf("%s is a valid method but it fails", value)
@@ -27,6 +27,5 @@ func TestValid(t *testing.T) {
 
 		t.Logf("%s didn't had to skip", value)
 	}
-
 
 }

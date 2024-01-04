@@ -2,6 +2,7 @@ package alf
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 
 	misc "github.com/PiterWeb/Alf-Router/errors"
@@ -52,7 +53,7 @@ func App(config *AppConfig) error { // creates the app and starts it
 
 		fmt.Scanf("\n%c")
 
-		errChan <- nil
+		errChan <- errors.New("server stopped manually")
 	}()
 
 	return <-errChan
@@ -61,7 +62,7 @@ func App(config *AppConfig) error { // creates the app and starts it
 
 func handleRoute(ctx *Ctx, config *AppConfig) {
 
-	routes, methodFound := config.Routes[string(ctx.Method())]
+	routes, methodFound := config.Routes[method(ctx.Method())]
 
 	if !methodFound {
 		return

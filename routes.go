@@ -11,17 +11,11 @@ import (
 
 var routesWg sync.WaitGroup
 
-func (r *routes) addRoute(method string, path string, route *finalRoute) {
+func (r *routes) addRoute(method method, path string, route *finalRoute) {
 
 	r.mu.Lock()
 
-	r.methodRoutes[method][path] = createRoute(&finalRoute{
-		Method:     route.Method,
-		Handle:     route.Handle,
-		Middleware: route.Middleware,
-		Headers:    route.Headers,
-		Error:      route.Error,
-	})
+	r.methodRoutes[method][path] = createRoute(route)
 	r.mu.Unlock()
 
 }
@@ -87,7 +81,7 @@ func createChildrenRoutes(routes *routes, r Route, initialPath string) {
 
 		go func() {
 
-			routes.addRoute(child.Method.string(), newChildPath, &finalRoute{ // generate new subroute
+			routes.addRoute(method(child.Method.string()), newChildPath, &finalRoute{ // generate new subroute
 				Method:     child.Method,
 				Handle:     child.Handle,
 				Middleware: append(r.Middleware, child.Middleware...), // apply middlewares of the parent route
@@ -143,7 +137,7 @@ func CreateRouter(r []Route) methodRoutes { // creates the routes of the app
 
 		go func(route Route) {
 
-			routes.addRoute(route.Method.string(), route.Path, &finalRoute{
+			routes.addRoute(method(route.Method.string()), route.Path, &finalRoute{
 				Method:     route.Method,
 				Handle:     route.Handle,
 				Middleware: route.Middleware,
