@@ -46,7 +46,7 @@ type AppConfig struct {
 }
 
 type Plugin interface {
-	Init_plugin() error
+	Init_plugin(*AppConfig) error
 }
 
 type routes struct {

@@ -4,6 +4,7 @@ import (
 	"os"
 	"strings"
 
+	alf "github.com/PiterWeb/Alf-Router"
 	"github.com/gzuidhof/tygo/tygo"
 	"golang.org/x/mod/modfile"
 )
@@ -13,7 +14,7 @@ type TS_plugin struct {
 	OutputFolder string
 }
 
-func (plugin TS_plugin) Init_plugin() error {
+func (plugin TS_plugin) Init_plugin(_ *alf.AppConfig) error {
 
 	cwd, err := os.Getwd()
 

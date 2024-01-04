@@ -26,7 +26,7 @@ func App(config *AppConfig) error { // creates the app and starts it
 
 	for _, pl := range config.Plugins {
 
-		err := pl.Init_plugin()
+		err := pl.Init_plugin(config)
 
 		if err != nil {
 			misc.ShowError(err.Error())
